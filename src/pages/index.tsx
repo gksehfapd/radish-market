@@ -3,14 +3,19 @@ export default function Home() {
 		<div className="bg-slate-400 py-10 px-20 grid gap-10 min-h-screen">
 			<div className="bg-white p-6 rounded-3xl shadow-xl">
 				<span className="font-semibold text-3xl">Select Item</span>
-				<div className="flex justify-between my-3">
-					<span className="text-gray-500">Grey Chair</span>
-					<span className="font-semibold">$170</span>
-				</div>
-				<div className="flex justify-between mb-3">
-					<span className="text-gray-500 ">Tooly Table</span>
-					<span className="font-semibold">$800</span>
-				</div>
+				<ul>
+					{[1, 2, 3, 4, 5].map((i) => (
+						<div key={i} className="flex justify-between my-2">
+							<span className="text-gray-500 ">Tooly Table</span>
+							<span className="font-semibold">$800</span>
+						</div>
+					))}
+				</ul>
+				{['a', 'b', 'c', ''].map((e, i) => (
+					<li className="bg-red-500 py-2 empty:hidden list-none" key={i}>
+						{e}
+					</li>
+				))}
 				<div className="mt-2 pt-2 border-t-2 border-dashed flex justify-between">
 					<span>Total</span>
 					<span className="font-semibold">$970</span>
@@ -19,7 +24,8 @@ export default function Home() {
 					Checkout
 				</button>
 			</div>
-			<div className="bg-white overflow-hidden rounded-3xl shadow-xl">
+
+			<div className="bg-white overflow-hidden rounded-3xl shadow-xl group">
 				<div>
 					<div className="bg-blue-500 p-6 pb-14">
 						<span className="text-white text-2xl">Profile</span>
@@ -30,7 +36,7 @@ export default function Home() {
 								<span className="text-sm text-gray-500">Orders</span>
 								<span className="font-medium">$340</span>
 							</div>
-							<div className="h-24 w-24 bg-gray-300 rounded-full" />
+							<div className="h-24 w-24 bg-zinc-300 rounded-full group-hover:bg-red-300 transition-colors" />
 							<div className="flex flex-col items-center">
 								<span className="text-sm text-gray-500">Spent</span>
 								<span className="font-medium">$340</span>
@@ -43,7 +49,8 @@ export default function Home() {
 					</div>
 				</div>
 			</div>
-			<div className="bg-white p-10 rounded-3xl shadow-xl">
+
+			<div className="bg-white p-10 rounded-3xl shadow-xl group">
 				<div className="flex justify-between items-center mb-5">
 					<span>&larr;</span>
 					<div className="space-x-3">
@@ -80,6 +87,20 @@ export default function Home() {
 				</div>
 			</div>
 			<div className="bg-white p-10 rounded-3xl shadow-xl"></div>
+
+			<form
+				action=""
+				className="flex flex-col space-y-2 bg-blue-500 p-5 focus-within:bg-blue-100"
+			>
+				<input
+					type="text"
+					required
+					placeholder="Username"
+					className="placeholder-shown:bg-teal-500"
+				/>
+				<input type="password" required placeholder="password" />
+				<input type="submit" value="Login" className="bg-white" />
+			</form>
 		</div>
 	)
 }
