@@ -2,7 +2,6 @@ import client from '@/libs/server/client'
 import smtpTransport from '@/libs/server/email'
 import withHandler, { ResponseType } from '@/libs/server/withHandler'
 import { NextApiRequest, NextApiResponse } from 'next'
-
 import Twilio from 'twilio'
 
 const twilioClient = Twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN)
@@ -25,31 +24,31 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 		}
 	})
 	if (phone) {
-		const message = await twilioClient.messages.create({
-			messagingServiceSid: process.env.TWILIO_MSID,
-			to: process.env.MY_PHONE!,
-			body: `Your login token is ${payload}.`
-		})
-		console.log(message)
+		// const message = await twilioClient.messages.create({
+		// 	messagingServiceSid: process.env.TWILIO_MSID,
+		// 	to: process.env.MY_PHONE!,
+		// 	body: `Your login token is ${payload}.`
+		// })
+		// console.log(message)
 	}
 	if (email) {
-		const mailOptions = {
-			from: process.env.MAIL_ID,
-			to: email,
-			subject: 'Nomad Radish Authentication Email',
-			text: `Authentication Code : ${payload}`
-		}
-		const result = await smtpTransport.sendMail(mailOptions, (error, response) => {
-			if (error) {
-				console.log(error)
-				return null
-			} else {
-				console.log(response)
-				return null
-			}
-		})
-		smtpTransport.close()
-		console.log(result)
+		// const mailOptions = {
+		// 	from: process.env.MAIL_ID,
+		// 	to: email,
+		// 	subject: 'Nomad Radish Authentication Email',
+		// 	text: `Authentication Code : ${payload}`
+		// }
+		// const result = await smtpTransport.sendMail(mailOptions, (error, response) => {
+		// 	if (error) {
+		// 		console.log(error)
+		// 		return null
+		// 	} else {
+		// 		console.log(response)
+		// 		return null
+		// 	}
+		// })
+		// smtpTransport.close()
+		// console.log(result)
 	}
 	return res.json({ ok: true })
 }
