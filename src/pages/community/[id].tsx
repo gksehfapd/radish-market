@@ -5,6 +5,8 @@ import useSWR from 'swr'
 import { useRouter } from 'next/router'
 import { Answer, Post, User } from '@prisma/client'
 import Link from 'next/link'
+import useMutation from '@/libs/client/useMutation'
+import { cls } from '@/libs/client/utils'
 
 interface AnswerWithUser extends Answer {
 	user: User
@@ -22,14 +24,35 @@ interface PostWithUser extends Post {
 interface CommunityPostResponse {
 	ok: boolean
 	post: PostWithUser
+	isInteresting: boolean
 }
 
 const CommunityPostDetail: NextPage = () => {
 	const router = useRouter()
-	const { data, error } = useSWR<CommunityPostResponse>(
+	const { data, mutate } = useSWR<CommunityPostResponse>(
 		router.query.id ? `/api/posts/${router.query.id}` : null
 	)
-	console.log(data)
+	const [interested] = useMutation(`/api/posts/${router.query.id}/interested`)
+	const onInterestClick = () => {
+		if (!data) return
+		mutate(
+			{
+				...data,
+				post: {
+					...data.post,
+					_count: {
+						...data?.post._count,
+						interests: data.isInteresting
+							? data?.post._count.interests - 1
+							: data?.post._count.interests + 1
+					}
+				},
+				isInteresting: !data.isInteresting
+			},
+			false
+		)
+		interested({})
+	}
 	return (
 		<Layout canGoBack>
 			<div>
@@ -54,7 +77,13 @@ const CommunityPostDetail: NextPage = () => {
 						{data?.post?.question}
 					</div>
 					<div className="flex px-4 space-x-5 mt-3 text-gray-700 py-2.5 border-t border-b-[2px]  w-full">
-						<span className="flex space-x-2 items-center text-sm">
+						<button
+							onClick={onInterestClick}
+							className={cls(
+								'flex space-x-2 items-center text-sm',
+								data?.isInteresting ? 'text-teal-400' : ''
+							)}
+						>
 							<svg
 								className="w-4 h-4"
 								fill="none"
@@ -70,7 +99,7 @@ const CommunityPostDetail: NextPage = () => {
 								></path>
 							</svg>
 							<span>궁금해요 {data?.post._count.interests}</span>
-						</span>
+						</button>
 						<span className="flex space-x-2 items-center text-sm">
 							<svg
 								className="w-4 h-4"
@@ -91,7 +120,7 @@ const CommunityPostDetail: NextPage = () => {
 					</div>
 				</div>
 				<div className="px-4 my-5 space-y-5">
-					{data?.post.answers.map((answer) => (
+					{data?.post?.answers?.map((answer) => (
 						<div key={answer.id} className="flex items-start space-x-3">
 							<div className="w-8 h-8 bg-slate-200 rounded-full" />
 							<div>

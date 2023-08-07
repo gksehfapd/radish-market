@@ -5,7 +5,8 @@ import { withApiSession } from '@/libs/server/withSession'
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
 	const {
-		query: { id }
+		query: { id },
+		session: { user }
 	} = req
 	const post = await client.post.findUnique({
 		where: {
@@ -40,7 +41,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 			}
 		}
 	})
-	res.json({ ok: true, post })
+
+	const isInteresting = Boolean(
+		await client.interested.findFirst({
+			where: {
+				postId: +id!.toString(),
+				userId: user?.id
+			},
+			select: {
+				id: true
+			}
+		})
+	)
+	res.json({ ok: true, post, isInteresting })
 }
 
 export default withApiSession(withHandler({ methods: ['GET'], handler }))
