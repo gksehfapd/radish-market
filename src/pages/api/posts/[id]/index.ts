@@ -31,7 +31,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 							avatar: true
 						}
 					}
-				}
+				},
+				take: 10,
+				skip: 20
 			},
 			_count: {
 				select: {
