@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
-import Layout from '../../components/layout'
-import TextArea from '../../components/textarea'
+import Layout from '@/components/layout'
+import TextArea from '@/components/textarea'
 import useSWR from 'swr'
 import { useRouter } from 'next/router'
 import { Answer, Post, User } from '@prisma/client'

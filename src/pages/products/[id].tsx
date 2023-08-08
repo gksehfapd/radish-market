@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
-import Button from '../../components/button'
-import Layout from '../../components/layout'
+import Button from '@/components/button'
+import Layout from '@/components/layout'
 import { useRouter } from 'next/router'
 import useSWR, { useSWRConfig } from 'swr'
 import Link from 'next/link'
