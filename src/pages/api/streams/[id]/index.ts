@@ -11,6 +11,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 	const stream = await client.stream.findUnique({
 		where: {
 			id: +id!.toString()
+		},
+		include: {
+			messages: {
+				select: {
+					id: true,
+					message: true,
+					user: {
+						select: {
+							name: true,
+							id: true,
+							avatar: true
+						}
+					}
+				}
+			}
 		}
 	})
 	res.json({ ok: true, stream })
