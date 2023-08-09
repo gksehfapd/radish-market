@@ -5,6 +5,7 @@ import Layout from '@/components/layout'
 import { Stream } from '@prisma/client'
 import useSWR from 'swr'
 import { useState } from 'react'
+import { cls } from '@/libs/client/utils'
 
 interface StreamsResponse {
 	ok: boolean
@@ -72,13 +73,30 @@ const Streams: NextPage = () => {
 				</FloatingButton>
 
 				<div className="pt-4 px-8 flex justify-between ">
-					<button onClick={prevPageList}>&larr;</button>
+					<button
+						onClick={prevPageList}
+						className="p-1 rounded-full w-8 h-8 hover:bg-orange-300 active:bg-orange-400"
+					>
+						&larr;
+					</button>
 					{currentPageList.map((pageSelect) => (
-						<button key={pageSelect} onClick={() => onPageBtnClick(pageSelect)}>
+						<button
+							key={pageSelect}
+							onClick={() => onPageBtnClick(pageSelect)}
+							className={cls(
+								'p-1 rounded-full w-8 h-8 hover:bg-orange-300 active:bg-orange-400',
+								pageSelect === pageNum ? 'bg-orange-200' : ''
+							)}
+						>
 							{pageSelect}
 						</button>
 					))}
-					<button onClick={nextPageList}>&rarr;</button>
+					<button
+						onClick={nextPageList}
+						className="p-1 rounded-full w-8 h-8 hover:bg-orange-300 active:bg-orange-400"
+					>
+						&rarr;
+					</button>
 				</div>
 			</div>
 		</Layout>
