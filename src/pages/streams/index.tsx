@@ -4,15 +4,43 @@ import FloatingButton from '@/components/floating-button'
 import Layout from '@/components/layout'
 import { Stream } from '@prisma/client'
 import useSWR from 'swr'
+import { useState } from 'react'
 
 interface StreamsResponse {
 	ok: boolean
 	streams: Stream[]
+	countStreams: number
 }
 
 const Streams: NextPage = () => {
-	const { data } = useSWR<StreamsResponse>(`/api/streams?page=1`)
-	console.log(data)
+	const [pageNum, setPageNum] = useState(1)
+	const [pageListNum, setPageListNum] = useState(0)
+	const shownPages = 10
+
+	const { data } = useSWR<StreamsResponse>(`/api/streams?page=${pageNum}`)
+
+	const totalPages = Math.ceil(data?.countStreams! / shownPages)
+	const pageArr = Array.from({ length: totalPages }, (v, i) => i + 1)
+
+	const maxPageList = Math.floor(totalPages / 10) * 10
+
+	let currentPageList = pageArr.slice(pageListNum, pageListNum + shownPages)
+
+	const onPageBtnClick = (clickedNum: number) => {
+		setPageNum(clickedNum)
+		window.scrollTo(0, 0)
+	}
+
+	const prevPageList = () => {
+		if (pageListNum <= 0) return
+		setPageListNum((prev) => prev - shownPages)
+	}
+
+	const nextPageList = () => {
+		if (pageListNum >= maxPageList) return
+		setPageListNum((prev) => prev + shownPages)
+	}
+
 	return (
 		<Layout hasTabBar title="라이브">
 			<div className=" divide-y-[1px] space-y-4">
@@ -42,6 +70,16 @@ const Streams: NextPage = () => {
 						></path>
 					</svg>
 				</FloatingButton>
+
+				<div className="pt-4 px-8 flex justify-between ">
+					<button onClick={prevPageList}>&larr;</button>
+					{currentPageList.map((pageSelect) => (
+						<button key={pageSelect} onClick={() => onPageBtnClick(pageSelect)}>
+							{pageSelect}
+						</button>
+					))}
+					<button onClick={nextPageList}>&rarr;</button>
+				</div>
 			</div>
 		</Layout>
 	)
