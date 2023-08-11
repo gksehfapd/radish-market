@@ -35,11 +35,12 @@ interface MessageForm {
 const MessageStream: NextPage = () => {
 	const user = useUser()
 	const router = useRouter()
+
 	const { register, handleSubmit, reset } = useForm<MessageForm>()
 	const { data, mutate } = useSWR<StreamResponse>(
 		router.query.id ? `/api/streams/${router.query.id}` : null,
 		{
-			refreshInterval: 1000
+			// refreshInterval: 1000
 		}
 	)
 	const [sendMessage, { loading, data: sendMessageData }] = useMutation(
@@ -72,6 +73,7 @@ const MessageStream: NextPage = () => {
 		sendMessage(form)
 	}
 	const scrollRef = useRef<HTMLDivElement>(null)
+
 	useEffect(() => {
 		scrollRef?.current?.scrollIntoView()
 	})
@@ -93,7 +95,7 @@ const MessageStream: NextPage = () => {
 				</div>
 				<div>
 					<h2 className="text-2xl font-bold text-gray-900">Live Chat</h2>
-					<div className="py-10 pb-2 h-[50vh] overflow-y-scroll over  px-4 space-y-4">
+					<div className="py-10 pb-2 h-[50vh] overflow-y-scroll px-4 space-y-4">
 						{data?.stream.messages.map((message) => (
 							<Message
 								key={message.id}
