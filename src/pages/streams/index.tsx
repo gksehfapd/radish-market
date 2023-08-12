@@ -51,7 +51,11 @@ const Streams: NextPage = () => {
 						href={`/streams/${stream.id}`}
 						className="pt-4 block px-4"
 					>
-						<div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video" />
+						<div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video">
+							{/* <Image
+                  fill
+                  src={`https://videodelivery.net/${stream.cloudflareId}/thumbnails/thumbnail.jpg?height=320`} */}
+						</div>
 						<h1 className="text-2xl mt-2 font-bold text-gray-900">{stream.name}</h1>
 					</Link>
 				))}
