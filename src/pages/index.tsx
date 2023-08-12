@@ -29,14 +29,17 @@ const Home: NextPage = () => {
 			</Head>
 			<div className="flex flex-col space-y-5 divide-y">
 				{data?.products?.map((product) => (
-					<Item
-						id={product.id}
-						key={product.id}
-						title={product.name}
-						price={product.price}
-						comments={1}
-						hearts={product._count.favs}
-					/>
+					<div>
+						<Item
+							id={product.id}
+							key={product.id}
+							title={product.name}
+							price={product.price}
+							productIMG={product.image}
+							comments={1}
+							hearts={product._count.favs}
+						/>
+					</div>
 				))}
 				<FloatingButton href="/products/upload">
 					<svg

@@ -55,7 +55,7 @@ const Streams: NextPage = () => {
 						<h1 className="text-2xl mt-2 font-bold text-gray-900">{stream.name}</h1>
 					</Link>
 				))}
-				<FloatingButton href="/live/create">
+				<FloatingButton href="/streams/create">
 					<svg
 						className="w-6 h-6"
 						fill="none"
