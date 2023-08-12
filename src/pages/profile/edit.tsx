@@ -34,11 +34,13 @@ const EditProfile: NextPage = () => {
 		if (user?.name) setValue('name', user.name)
 		if (user?.email) setValue('email', user.email)
 		if (user?.phone) setValue('phone', user.phone)
+		if (user?.avatar)
+			setAvatarPrev(`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${user?.avatar}/avatar`)
 	}, [user, setValue])
 
 	const [editProfile, { data, loading }] = useMutation<EditProfileResponse>(`/api/users/me`)
 
-	const onValid = ({ email, phone, name, avatar }: EditProfileForm) => {
+	const onValid = async ({ email, phone, name, avatar }: EditProfileForm) => {
 		if (loading) return
 		if (email === '' && phone === '' && name === '') {
 			return setError('formErrors', {
@@ -46,11 +48,35 @@ const EditProfile: NextPage = () => {
 			})
 		}
 
-		editProfile({
-			email,
-			phone,
-			name
-		})
+		if (avatar && avatar.length > 0 && user) {
+			// ask for CF URL
+			const { uploadURL } = await (await fetch(`/api/files`)).json()
+
+			// upload file to CF URL
+			const form = new FormData()
+			form.append('file', avatar[0], user?.id + '')
+			const {
+				result: { id }
+			} = await (
+				await fetch(uploadURL, {
+					method: 'POST',
+					body: form
+				})
+			).json()
+
+			editProfile({
+				email,
+				phone,
+				name,
+				avatarId: id
+			})
+		} else {
+			editProfile({
+				email,
+				phone,
+				name
+			})
+		}
 	}
 
 	useEffect(() => {
