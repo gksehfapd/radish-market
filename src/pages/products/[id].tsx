@@ -5,10 +5,10 @@ import { useRouter } from 'next/router'
 import useSWR, { useSWRConfig } from 'swr'
 import Link from 'next/link'
 import { Product, User } from '@prisma/client'
-import { useEffect } from 'react'
 import useMutation from '@/libs/client/useMutation'
 import { cls } from '@/libs/client/utils'
 import useUser from '@/libs/client/useUser'
+import Image from 'next/image'
 
 interface ProductWithUser extends Product {
 	user: User
@@ -48,13 +48,20 @@ const ItemDetail: NextPage = () => {
 		<Layout canGoBack>
 			<div className="px-4  py-4">
 				<div className="mb-8">
-					<img
-						src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${data?.product.image}/public`}
-						className="h-96 bg-slate-300"
-					/>
+					<div className="relative h-96">
+						<Image
+							alt=""
+							src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${data?.product.image}/public`}
+							className="bg-slate-300 object-cover"
+							fill
+						/>
+					</div>
 					<div className="flex cursor-pointer py-3 border-t border-b items-center space-x-3">
 						{data?.product.user.avatar ? (
-							<img
+							<Image
+								alt=""
+								width={48}
+								height={48}
 								className="w-12 h-12 rounded-full"
 								src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${data?.product.user.avatar}/avatar`}
 							/>
