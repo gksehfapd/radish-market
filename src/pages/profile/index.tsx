@@ -29,6 +29,8 @@ const Profile: NextPage = () => {
 							alt=""
 							src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${user?.avatar}/avatar`}
 							className="w-16 h-16 bg-slate-500 rounded-full"
+							height={64}
+							width={64}
 						/>
 					) : (
 						<div className="w-16 h-16 bg-slate-500 rounded-full" />

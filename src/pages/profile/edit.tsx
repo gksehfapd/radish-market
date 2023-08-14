@@ -105,6 +105,8 @@ const EditProfile: NextPage = () => {
 						<Image
 							alt=""
 							src={avatarPrev}
+							width={75}
+							height={75}
 							className="w-14 h-14 rounded-full bg-slate-500"
 						/>
 					) : (
