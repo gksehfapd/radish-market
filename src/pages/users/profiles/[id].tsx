@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import useSWR from 'swr'
 import Image from 'next/image'
 import Item from '@/components/item'
-import { Product, User } from '@prisma/client'
+import { User } from '@prisma/client'
 import { ProductWithCount } from '@/pages'
 
 interface ProfileWithProducts extends User {
@@ -55,8 +55,8 @@ const UserProfile: NextPage = () => {
 								title={product.name}
 								price={product.price}
 								productIMG={product.image}
-								comments={1}
-								hearts={0}
+								comments={0}
+								hearts={product._count.favs}
 							/>
 						</div>
 					))}

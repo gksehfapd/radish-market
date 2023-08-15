@@ -19,28 +19,41 @@ interface ReviewResponse {
 const Profile: NextPage = () => {
 	const { user } = useUser()
 	const { data } = useSWR<ReviewResponse>('api/reviews')
+	const onLogOutClick = async () => {
+		//TODO:로그아웃 기능
+		return
+	}
 
 	return (
 		<Layout hasTabBar title="나의 캐럿">
 			<div className="px-4">
-				<div className="flex items-center mt-4 space-x-3">
-					{user?.avatar ? (
-						<Image
-							alt=""
-							src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${user?.avatar}/avatar`}
-							className="w-16 h-16 bg-slate-500 rounded-full"
-							height={64}
-							width={64}
-						/>
-					) : (
-						<div className="w-16 h-16 bg-slate-500 rounded-full" />
-					)}
-					<div className="flex flex-col">
-						<span className="font-medium text-gray-900">{user?.name}</span>
-						<Link href="/profile/edit" className="text-sm text-gray-700">
-							Edit profile &rarr;
-						</Link>
+				<div className="flex items-center justify-between">
+					<div className="flex items-center mt-4 space-x-3">
+						{user?.avatar ? (
+							<Image
+								alt=""
+								src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${user?.avatar}/avatar`}
+								className="w-16 h-16 bg-slate-500 rounded-full"
+								height={64}
+								width={64}
+							/>
+						) : (
+							<div className="w-16 h-16 bg-slate-500 rounded-full" />
+						)}
+						<div className="flex flex-col">
+							<span className="font-medium text-gray-900">{user?.name}</span>
+							<Link href="/profile/edit" className="text-sm text-gray-700">
+								Edit profile &rarr;
+							</Link>
+						</div>
 					</div>
+
+					<button
+						onClick={onLogOutClick}
+						className="mr-5 mt-2 px-2 py-1 rounded-xl border-gray-300 border-2 text-xs hover:bg-gray-300 active:bg-gray-400"
+					>
+						Log Out
+					</button>
 				</div>
 				<div className="mt-10 flex justify-around">
 					<Link href="/profile/sold" className="flex flex-col items-center">
