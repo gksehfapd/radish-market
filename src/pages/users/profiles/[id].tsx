@@ -47,18 +47,17 @@ const UserProfile: NextPage = () => {
 				<hr className="" />
 				<div className="flex flex-col space-y-5 divide-y">
 					{' '}
-					{data?.profile.products?.map((product: ProductWithCount) => (
-						<div>
-							<Item
-								id={product.id}
-								key={product.id}
-								title={product.name}
-								price={product.price}
-								productIMG={product.image}
-								comments={0}
-								hearts={product._count.favs}
-							/>
-						</div>
+					{data?.profile.products.map((product: ProductWithCount) => (
+						<Item
+							id={product.id}
+							key={product.id}
+							title={product.name}
+							price={product.price}
+							productIMG={product.image}
+							comments={0}
+							hearts={product._count.favs}
+							reserved={product.reserved}
+						/>
 					))}
 				</div>
 			</div>

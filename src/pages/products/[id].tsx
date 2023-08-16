@@ -2,13 +2,14 @@ import type { NextPage } from 'next'
 import Button from '@/components/button'
 import Layout from '@/components/layout'
 import { useRouter } from 'next/router'
-import useSWR, { useSWRConfig } from 'swr'
+import useSWR from 'swr'
 import Link from 'next/link'
 import { Product, User } from '@prisma/client'
 import useMutation from '@/libs/client/useMutation'
 import { cls } from '@/libs/client/utils'
 import useUser from '@/libs/client/useUser'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
 interface ProductWithUser extends Product {
 	user: User
@@ -23,6 +24,7 @@ interface ItemDetailResponse {
 
 const ItemDetail: NextPage = () => {
 	const router = useRouter()
+	const { user } = useUser()
 
 	const { data, mutate: boundMutate } = useSWR<ItemDetailResponse>(
 		router.query.id ? `/api/products/${router.query.id}` : null
@@ -40,6 +42,29 @@ const ItemDetail: NextPage = () => {
 		}
 	}
 
+	const [toggleReserve, { loading: reserveLoading }] = useMutation(
+		`/api/products/${router.query.id}/reserve`
+	)
+
+	const [isReserved, setIsReserved] = useState(false)
+
+	const onReserveClick = () => {
+		if (!data) return
+
+		if (!reserveLoading) {
+			toggleReserve({})
+			setIsReserved((prev) => !prev)
+		}
+	}
+
+	useEffect(() => {
+		if (data?.product.reserved) {
+			setIsReserved(true)
+		} else if (!data?.product.reserved) {
+			setIsReserved(false)
+		}
+	}, [data])
+
 	return (
 		<Layout canGoBack>
 			<div className="px-4  py-4">
@@ -51,29 +76,50 @@ const ItemDetail: NextPage = () => {
 							className="bg-slate-300 object-cover"
 							fill
 						/>
+						{isReserved ? (
+							<div className="absolute w-full h-full rotate-12 flex items-center justify-center">
+								<div className="bg-slate-300 w-full rotate-3 font-bold flex justify-center border-t-4 border-b-4 border-black">
+									RESERVED RESERVED RESERVED RESERVED
+								</div>
+							</div>
+						) : null}
 					</div>
-					<div className="flex cursor-pointer py-3 border-t border-b items-center space-x-3">
-						{data?.product.user.avatar ? (
-							<Image
-								alt=""
-								width={48}
-								height={48}
-								className="w-12 h-12 rounded-full"
-								src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${data?.product.user.avatar}/avatar`}
-							/>
-						) : (
-							<div className="w-12 h-12 rounded-full bg-slate-300" />
-						)}
-						<div>
-							<p className="text-sm font-medium text-gray-700">
-								{data?.product?.user?.name}
-							</p>
-							<Link
-								href={`/users/profiles/${data?.product?.user?.id}`}
-								className="text-xs font-medium text-gray-500"
-							>
-								View profile &rarr;
-							</Link>
+					<div className="flex justify-between items-center border-t border-b py-3 ">
+						<div className="flex cursor-pointer items-center space-x-3">
+							{data?.product.user.avatar ? (
+								<Image
+									alt=""
+									width={48}
+									height={48}
+									className="w-12 h-12 rounded-full"
+									src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${data?.product.user.avatar}/avatar`}
+								/>
+							) : (
+								<div className="w-12 h-12 rounded-full bg-slate-300" />
+							)}
+							<div>
+								<p className="text-sm font-medium text-gray-700">
+									{data?.product?.user?.name}
+								</p>
+								<Link
+									href={`/users/profiles/${data?.product?.user?.id}`}
+									className="text-xs font-medium text-gray-500"
+								>
+									View profile &rarr;
+								</Link>
+							</div>
+						</div>
+						<div className="h-8">
+							{data?.product.userId === user?.id ? (
+								<button
+									onClick={onReserveClick}
+									className="mr-3 px-2 h-full w-full rounded-xl border-gray-300 border-2 text-xs hover:bg-gray-300 active:bg-gray-400"
+								>
+									{isReserved ? '예약 취소' : '예약 하기'}
+								</button>
+							) : (
+								<div></div>
+							)}
 						</div>
 					</div>
 					<div className="mt-5">
@@ -138,7 +184,13 @@ const ItemDetail: NextPage = () => {
 							? data.relatedProducts.map((product) => (
 									<Link key={product.id} href={`/products/${product.id}`}>
 										<div>
-											<div className="h-56 w-full mb-4 bg-slate-300" />
+											<Image
+												alt=""
+												src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${product.image}/public`}
+												className="bg-slate-300 object-cover"
+												width={180}
+												height={180}
+											/>
 											<h3 className="text-gray-700 -mb-1">{product.name}</h3>
 											<span className="text-sm font-medium text-gray-900">
 												${product.price}

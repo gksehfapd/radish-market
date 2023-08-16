@@ -8,19 +8,37 @@ interface ItemProps {
 	comments: number
 	hearts: number
 	productIMG?: string
+	reserved: boolean
 }
 
-export default function Item({ title, price, comments, hearts, id, productIMG }: ItemProps) {
+export default function Item({
+	title,
+	price,
+	comments,
+	hearts,
+	id,
+	productIMG,
+	reserved
+}: ItemProps) {
 	return (
 		<Link href={`/products/${id}`} className="flex px-4 pt-5 cursor-pointer justify-between">
 			<div className="flex space-x-4">
-				<Image
-					width={75}
-					height={75}
-					src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${productIMG}/public`}
-					alt=""
-					className="w-20 h-20 rounded-md border-gray-100 border-2"
-				/>
+				<div className="relative h-full">
+					<Image
+						width={75}
+						height={75}
+						src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${productIMG}/public`}
+						alt=""
+						className="w-20 h-20 rounded-md border-gray-100 border-2"
+					/>
+					{reserved ? (
+						<div className="absolute w-full h-full rotate-12 top-0 flex justify-center items-center">
+							<div className="bg-slate-300 w-full rotate-3 flex justify-center items-center text-sm border-t-2 border-b-2 border-black">
+								RESERVED
+							</div>
+						</div>
+					) : null}
+				</div>
 				<div className="pt-2 flex flex-col">
 					<h3 className="text-sm font-medium text-gray-900">{title}</h3>
 					<span className="font-medium mt-1 text-gray-900">${price}</span>

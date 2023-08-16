@@ -30,6 +30,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 				price: +price,
 				description,
 				image: photoId,
+				reserved: false,
 				user: {
 					connect: {
 						id: user?.id

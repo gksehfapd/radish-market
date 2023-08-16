@@ -57,6 +57,7 @@ model Product {
   favs        Fav[]
   sales       Sale[]
   purchases   Purchase[]
+  reserved    Boolean
 
   @@index([userId])
 }

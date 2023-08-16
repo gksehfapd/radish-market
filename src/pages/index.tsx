@@ -22,6 +22,8 @@ const Home: NextPage = () => {
 	const { user, isLoading } = useUser()
 	const { data } = useSWR<ProductsResponse>('/api/products')
 
+	console.log(data)
+
 	return (
 		<Layout title="홈" hasTabBar>
 			<Head>
@@ -37,6 +39,7 @@ const Home: NextPage = () => {
 						productIMG={product.image}
 						comments={1}
 						hearts={product._count.favs}
+						reserved={product.reserved}
 					/>
 				))}
 				<FloatingButton href="/products/upload">

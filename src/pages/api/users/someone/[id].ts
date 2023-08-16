@@ -6,7 +6,7 @@ import { withApiSession } from '@/libs/server/withSession'
 async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
 	if (req.method === 'GET') {
 		const profile = await client.user.findUnique({
-			where: { id: req.session.user?.id },
+			where: { id: Number(req.query.id) },
 			include: {
 				products: {
 					select: {
@@ -14,7 +14,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 						name: true,
 						price: true,
 						image: true,
-						_count: true
+						_count: true,
+						reserved: true
 					}
 				}
 			}
