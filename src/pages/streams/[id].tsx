@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import useMutation from '@/libs/client/useMutation'
 import useUser from '@/libs/client/useUser'
 import { useEffect, useRef, useState } from 'react'
+import messages from '../api/streams/[id]/messages'
 
 interface StreamMessage {
 	message: string
@@ -82,6 +83,7 @@ const MessageStream: NextPage = () => {
 	useEffect(() => {
 		window.scrollTo(0, 0)
 	}, [])
+	console.log(data?.stream.messages)
 
 	return (
 		<Layout canGoBack>
@@ -113,6 +115,7 @@ const MessageStream: NextPage = () => {
 								message={message.message}
 								name={message.user.name}
 								reversed={message.user.id === user.user?.id}
+								avatarUrl={message.user.avatar}
 							/>
 						))}
 						<div ref={scrollRef} />

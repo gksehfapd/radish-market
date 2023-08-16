@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { cls } from '@/libs/client/utils'
 
 interface MessageProps {
@@ -15,8 +16,17 @@ export default function Message({ message, avatarUrl, reversed, name }: MessageP
 				reversed ? 'flex-row-reverse space-x-reverse' : ''
 			)}
 		>
-			<div className="w-8 h-8 rounded-full bg-slate-400" />
-
+			{avatarUrl ? (
+				<Image
+					alt=""
+					width={32}
+					height={32}
+					className="w-8 h-8 rounded-full bg-slate-400"
+					src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${avatarUrl}/avatar`}
+				/>
+			) : (
+				<div className="w-8 h-8 rounded-full bg-slate-400" />
+			)}
 			{reversed ? (
 				<div className="w-1/2 flex flex-col items-end ">
 					<span className="text-xs">{name ? name : 'No Name'}</span>
