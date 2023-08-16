@@ -82,6 +82,8 @@ const CommunityPostDetail: NextPage = () => {
 			mutate()
 		}
 	}, [answerData, reset, mutate])
+
+	console.log(data)
 	return (
 		<Layout canGoBack>
 			<div>
@@ -152,14 +154,14 @@ const CommunityPostDetail: NextPage = () => {
 					{data?.post?.answers?.map((answer) => (
 						<div key={answer.id} className="flex items-start space-x-3">
 							<div className="w-8 h-8 bg-slate-200 rounded-full" />
-							<div>
+							<div className="-mt-1">
 								<span className="text-sm block font-medium text-gray-700">
 									{answer.user.name}
 								</span>
-								<span className="text-xs text-gray-500 block ">
+								<p className="text-gray-700">{answer.answer}</p>
+								<span className="text-xs text-gray-500 block mt-1">
 									{String(answer.createdAt)}
 								</span>
-								<p className="text-gray-700 mt-2">{answer.answer}</p>
 							</div>
 						</div>
 					))}
