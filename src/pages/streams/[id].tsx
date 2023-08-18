@@ -7,8 +7,7 @@ import { Stream } from '@prisma/client'
 import { useForm } from 'react-hook-form'
 import useMutation from '@/libs/client/useMutation'
 import useUser from '@/libs/client/useUser'
-import { useEffect, useRef, useState } from 'react'
-import messages from '../api/streams/[id]/messages'
+import { useEffect, useRef } from 'react'
 
 interface StreamMessage {
 	message: string
@@ -45,9 +44,7 @@ const MessageStream: NextPage = () => {
 			// refreshInterval: 1000
 		}
 	)
-	const [sendMessage, { loading, data: sendMessageData }] = useMutation(
-		`/api/streams/${router.query.id}/messages`
-	)
+	const [sendMessage, { loading }] = useMutation(`/api/streams/${router.query.id}/messages`)
 	const onValid = (form: MessageForm) => {
 		if (loading) return
 		reset()
@@ -83,7 +80,6 @@ const MessageStream: NextPage = () => {
 	useEffect(() => {
 		window.scrollTo(0, 0)
 	}, [])
-	console.log(data?.stream.messages)
 
 	return (
 		<Layout canGoBack>

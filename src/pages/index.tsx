@@ -2,7 +2,6 @@ import type { NextPage } from 'next'
 import FloatingButton from '@/components/floating-button'
 import Item from '@/components/item'
 import Layout from '@/components/layout'
-import useUser from '@/libs/client/useUser'
 import Head from 'next/head'
 import useSWR from 'swr'
 import { Product } from '@prisma/client'
@@ -19,10 +18,7 @@ interface ProductsResponse {
 }
 
 const Home: NextPage = () => {
-	const { user, isLoading } = useUser()
 	const { data } = useSWR<ProductsResponse>('/api/products')
-
-	console.log(data)
 
 	return (
 		<Layout title="홈" hasTabBar>
