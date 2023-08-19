@@ -44,7 +44,7 @@ const Streams: NextPage = () => {
 
 	return (
 		<Layout hasTabBar title="라이브">
-			<div className=" divide-y-[1px] space-y-4">
+			<div className="divide-y-[1px] space-y-4 flex flex-col justify-between h-full">
 				{data?.streams.map((stream) => (
 					<Link
 						key={stream.id}
@@ -75,33 +75,32 @@ const Streams: NextPage = () => {
 						></path>
 					</svg>
 				</FloatingButton>
-
-				<div className="pt-4 px-8 flex justify-between ">
+			</div>
+			<div className="pt-4 px-8 flex justify-between ">
+				<button
+					onClick={prevPageList}
+					className="p-1 rounded-full w-8 h-8 hover:bg-orange-300 active:bg-orange-400"
+				>
+					&larr;
+				</button>
+				{currentPageList.map((pageSelect) => (
 					<button
-						onClick={prevPageList}
-						className="p-1 rounded-full w-8 h-8 hover:bg-orange-300 active:bg-orange-400"
+						key={pageSelect}
+						onClick={() => onPageBtnClick(pageSelect)}
+						className={cls(
+							'p-1 rounded-full w-8 h-8 hover:bg-orange-300 active:bg-orange-400',
+							pageSelect === pageNum ? 'bg-orange-200' : ''
+						)}
 					>
-						&larr;
+						{pageSelect}
 					</button>
-					{currentPageList.map((pageSelect) => (
-						<button
-							key={pageSelect}
-							onClick={() => onPageBtnClick(pageSelect)}
-							className={cls(
-								'p-1 rounded-full w-8 h-8 hover:bg-orange-300 active:bg-orange-400',
-								pageSelect === pageNum ? 'bg-orange-200' : ''
-							)}
-						>
-							{pageSelect}
-						</button>
-					))}
-					<button
-						onClick={nextPageList}
-						className="p-1 rounded-full w-8 h-8 hover:bg-orange-300 active:bg-orange-400"
-					>
-						&rarr;
-					</button>
-				</div>
+				))}
+				<button
+					onClick={nextPageList}
+					className="p-1 rounded-full w-8 h-8 hover:bg-orange-300 active:bg-orange-400"
+				>
+					&rarr;
+				</button>
 			</div>
 		</Layout>
 	)
