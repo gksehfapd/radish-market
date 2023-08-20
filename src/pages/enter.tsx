@@ -6,6 +6,7 @@ import { cls } from '@/libs/client/utils'
 import { useForm } from 'react-hook-form'
 import useMutation from '@/libs/client/useMutation'
 import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
 
 interface EnterForm {
 	email?: string
@@ -20,7 +21,7 @@ interface MutationResult {
 }
 
 const Enter: NextPage = () => {
-	const [enter, { loading, data, error }] = useMutation<MutationResult>('/api/users/enter')
+	const [enter, { data }] = useMutation<MutationResult>('/api/users/enter')
 	const [confirmToken, { loading: tokenLoading, data: tokenData }] =
 		useMutation<MutationResult>('/api/users/confirm')
 	const { register, reset, handleSubmit } = useForm()

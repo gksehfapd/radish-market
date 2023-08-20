@@ -16,8 +16,8 @@ export default function Layout({ title, canGoBack, hasTabBar, children }: Layout
 		router.back()
 	}
 	return (
-		<div className="w-full h-full max-w-xl">
-			<div className="bg-white w-full h-12 max-w-xl justify-center text-lg px-10 font-medium fixed text-gray-800 border-b top-0 flex items-center">
+		<div className="w-full h-full">
+			<div className="bg-white w-full h-12 max-w-xl z-40 justify-center text-lg px-10 font-medium fixed text-gray-800 border-b top-0 flex items-center">
 				{canGoBack ? (
 					<button onClick={onClick} className="absolute left-4">
 						<svg
