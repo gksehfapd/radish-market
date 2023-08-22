@@ -35,7 +35,7 @@ const Home: NextPage = () => {
 								price={product.price}
 								productIMG={product.image}
 								comments={1}
-								hearts={product._count?.favs}
+								hearts={product._count?.favs || 0}
 								reserved={product.reserved}
 							/>
 					  ))
@@ -81,7 +81,7 @@ const Page: NextPage<{ products: ProductWithCount[] }> = ({ products }) => {
 
 export async function getServerSideProps() {
 	const products = await client.product.findMany({})
-	console.log(products)
+
 	return {
 		props: {
 			products: JSON.parse(JSON.stringify(products))
