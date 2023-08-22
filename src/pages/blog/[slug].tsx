@@ -1,8 +1,18 @@
+import Layout from '@/components/layout'
 import { readdirSync } from 'fs'
-import { NextPage } from 'next'
+import matter from 'gray-matter'
+import { GetStaticProps, NextPage } from 'next'
+import remarkHtml from 'remark-html'
+import remarkParse from 'remark-parse/lib'
+import { unified } from 'unified'
 
-const Post: NextPage = () => {
-	return <h1>hi</h1>
+const Post: NextPage<{ post: string; data: any }> = ({ post, data }) => {
+	return (
+		<Layout title={data.title}>
+			{' '}
+			<div className="blog-post-content" dangerouslySetInnerHTML={{ __html: post }} />
+		</Layout>
+	)
 }
 
 export function getStaticPaths() {
@@ -10,16 +20,23 @@ export function getStaticPaths() {
 		const [name, extension] = file.split('.')
 		return { params: { slug: name } }
 	})
-	console.log(files)
+
 	return {
 		paths: files,
 		fallback: false
 	}
 }
 
-export function getStaticProps() {
+export const getStaticProps: GetStaticProps = async (ctx) => {
+	const { content, data } = matter.read(`src/posts/${ctx.params?.slug}.md`)
+	//@ts-ignore
+	const { value } = await unified().use(remarkParse).use(remarkHtml).process(content)
+
 	return {
-		props: {}
+		props: {
+			data,
+			post: value
+		}
 	}
 }
 
