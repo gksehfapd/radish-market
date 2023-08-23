@@ -66,6 +66,14 @@ const ItemDetail: NextPage<ItemDetailResponse> = ({ product, relatedProducts, is
 		}
 	}, [data])
 
+	if (router.isFallback) {
+		return (
+			<Layout title="Loading for you">
+				<span>Loading...</span>
+			</Layout>
+		)
+	}
+
 	return (
 		<Layout canGoBack>
 			<div className="px-4  py-4">
