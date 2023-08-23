@@ -50,6 +50,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 				longitude: { gte: parsedLongitude - 0.01, lte: parsedLongitude + 0.01 }
 			}
 		})
+
+		await res.revalidate('/community')
+
 		res.json({ ok: true, posts })
 	}
 }
