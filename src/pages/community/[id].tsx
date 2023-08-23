@@ -9,6 +9,7 @@ import useMutation from '@/libs/client/useMutation'
 import { cls } from '@/libs/client/utils'
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
+import Image from 'next/image'
 
 interface AnswerWithUser extends Answer {
 	user: User
@@ -90,7 +91,17 @@ const CommunityPostDetail: NextPage = () => {
 					동네질문
 				</span>
 				<div className="flex mb-3 px-4 cursor-pointer pb-3  border-b items-center space-x-3">
-					<div className="w-10 h-10 rounded-full bg-slate-300" />
+					{data?.post.user.avatar ? (
+						<Image
+							alt=""
+							width={48}
+							height={48}
+							className="w-12 h-12 rounded-full"
+							src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${data?.post.user.avatar}/avatar`}
+						/>
+					) : (
+						<div className="w-10 h-10 rounded-full bg-slate-300" />
+					)}
 					<div>
 						<p className="text-sm font-medium text-gray-700">{data?.post.user.name}</p>
 						<Link
@@ -152,7 +163,17 @@ const CommunityPostDetail: NextPage = () => {
 				<div className="px-4 my-5 space-y-5">
 					{data?.post?.answers?.map((answer) => (
 						<div key={answer.id} className="flex items-start space-x-3">
-							<div className="w-8 h-8 bg-slate-200 rounded-full" />
+							{answer.user.avatar ? (
+								<Image
+									alt=""
+									width={48}
+									height={48}
+									className="w-12 h-12 rounded-full"
+									src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${answer.user.avatar}/avatar`}
+								/>
+							) : (
+								<div className="w-8 h-8 bg-slate-200 rounded-full" />
+							)}
 							<div className="-mt-1">
 								<span className="text-sm block font-medium text-gray-700">
 									{answer.user.name}
