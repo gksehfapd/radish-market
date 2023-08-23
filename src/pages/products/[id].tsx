@@ -1,4 +1,4 @@
-import type { NextPage } from 'next'
+import type { GetStaticPaths, GetStaticProps, NextPage } from 'next'
 import Button from '@/components/button'
 import Layout from '@/components/layout'
 import { useRouter } from 'next/router'
@@ -10,6 +10,7 @@ import { cls } from '@/libs/client/utils'
 import useUser from '@/libs/client/useUser'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import client from '@/libs/server/client'
 
 interface ProductWithUser extends Product {
 	user: User
@@ -22,7 +23,7 @@ interface ItemDetailResponse {
 	isLiked: boolean
 }
 
-const ItemDetail: NextPage = () => {
+const ItemDetail: NextPage<ItemDetailResponse> = ({ product, relatedProducts, isLiked }) => {
 	const router = useRouter()
 	const { user } = useUser()
 
@@ -58,9 +59,9 @@ const ItemDetail: NextPage = () => {
 	}
 
 	useEffect(() => {
-		if (data?.product.reserved) {
+		if (product.reserved) {
 			setIsReserved(true)
-		} else if (!data?.product.reserved) {
+		} else if (!product.reserved) {
 			setIsReserved(false)
 		}
 	}, [data])
@@ -72,7 +73,7 @@ const ItemDetail: NextPage = () => {
 					<div className="relative h-96">
 						<Image
 							alt=""
-							src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${data?.product.image}/public`}
+							src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${product.image}/public`}
 							className="bg-slate-300 object-cover"
 							fill
 						/>
@@ -86,23 +87,23 @@ const ItemDetail: NextPage = () => {
 					</div>
 					<div className="flex justify-between items-center border-t border-b py-3 ">
 						<div className="flex cursor-pointer items-center space-x-3">
-							{data?.product.user.avatar ? (
+							{product.user.avatar ? (
 								<Image
 									alt=""
 									width={48}
 									height={48}
 									className="w-12 h-12 rounded-full"
-									src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${data?.product.user.avatar}/avatar`}
+									src={`https://imagedelivery.net/VtzuniauOuty0o-pYoxlBw/${product.user.avatar}/avatar`}
 								/>
 							) : (
 								<div className="w-12 h-12 rounded-full bg-slate-300" />
 							)}
 							<div>
 								<p className="text-sm font-medium text-gray-700">
-									{data?.product?.user?.name}
+									{product?.user?.name}
 								</p>
 								<Link
-									href={`/users/profiles/${data?.product?.user?.id}`}
+									href={`/users/profiles/${product?.user?.id}`}
 									className="text-xs font-medium text-gray-500"
 								>
 									View profile &rarr;
@@ -110,7 +111,7 @@ const ItemDetail: NextPage = () => {
 							</div>
 						</div>
 						<div className="h-8">
-							{data?.product.userId === user?.id ? (
+							{product.userId === user?.id ? (
 								<button
 									onClick={onReserveClick}
 									className="mr-3 px-2 h-full w-full rounded-xl border-gray-300 border-2 text-xs hover:bg-gray-300 active:bg-gray-400"
@@ -138,12 +139,12 @@ const ItemDetail: NextPage = () => {
 								onClick={onFavClick}
 								className={cls(
 									'p-3 rounded-md flex items-center justify-center',
-									data?.isLiked
+									isLiked
 										? ' text-red-500 hover:bg-red-100 hover:text-red-500'
 										: ' text-gray-400 hover:bg-gray-100 hover:text-gray-500'
 								)}
 							>
-								{data?.isLiked ? (
+								{isLiked ? (
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										className="h-5 w-5"
@@ -180,8 +181,8 @@ const ItemDetail: NextPage = () => {
 				<div>
 					<h2 className="text-2xl font-bold text-gray-900">Similar items</h2>
 					<div className=" mt-6 grid grid-cols-2 gap-4">
-						{data?.relatedProducts
-							? data.relatedProducts.map((product) => (
+						{relatedProducts
+							? relatedProducts.map((product) => (
 									<Link key={product.id} href={`/products/${product.id}`}>
 										<div>
 											<Image
@@ -204,6 +205,62 @@ const ItemDetail: NextPage = () => {
 			</div>
 		</Layout>
 	)
+}
+
+export const getStaticPaths: GetStaticPaths = () => {
+	return {
+		paths: [],
+		fallback: 'blocking'
+	}
+}
+
+export const getStaticProps: GetStaticProps = async (ctx) => {
+	if (!ctx?.params?.id) {
+		return {
+			props: {}
+		}
+	}
+	const product = await client.product.findUnique({
+		where: {
+			id: +ctx.params.id!.toString()
+		},
+		include: {
+			user: {
+				select: {
+					id: true,
+					name: true,
+					avatar: true
+				}
+			}
+		}
+	})
+
+	const terms = product?.name.split(' ').map((word) => ({
+		name: {
+			contains: word
+		}
+	}))
+
+	const relatedProducts = await client.product.findMany({
+		where: {
+			OR: terms,
+			AND: {
+				id: {
+					not: product?.id
+				}
+			}
+		}
+	})
+
+	const isLiked = false
+
+	return {
+		props: {
+			product: JSON.parse(JSON.stringify(product)),
+			relatedProducts: JSON.parse(JSON.stringify(relatedProducts)),
+			isLiked
+		}
+	}
 }
 
 export default ItemDetail
