@@ -21,7 +21,7 @@ interface ReviewResponse {
 
 const Profile: NextPage = () => {
 	const { user } = useUser()
-	const { data } = useSWR<ReviewResponse>('api/reviews')
+	const { data } = useSWR<ReviewResponse>(typeof window === 'undefined' ? null : 'api/reviews')
 	const onLogOutClick = async () => {
 		//TODO:로그아웃 기능
 		return
