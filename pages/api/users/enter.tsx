@@ -3,6 +3,7 @@ import client from '@/libs/server/client'
 import withHandler from '@/libs/server/withHandler'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ResponseType } from '@/libs/server/withHandler'
+import smtpTransport from '@/libs/server/email'
 
 const twilioClient = twillo(process.env.TWILIO_SID, process.env.TWILIO_TOKEN)
 
@@ -35,6 +36,26 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 			to: process.env.MY_PHONE!,
 			body: `Your token is ${payload}`
 		})
+	}
+
+	if (email) {
+		const mailOptions = {
+			from: process.env.MAIL_ID,
+			to: email,
+			subject: 'Nomad Carrot Authentication Email',
+			text: `Authentication Code : ${payload}`
+		}
+		const result = await smtpTransport.sendMail(mailOptions, (error, responses) => {
+			if (error) {
+				console.log(error)
+				return null
+			} else {
+				console.log(responses)
+				return null
+			}
+		})
+		smtpTransport.close()
+		console.log(result)
 	}
 
 	return res.json({
