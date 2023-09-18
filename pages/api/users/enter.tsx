@@ -10,7 +10,7 @@ const twilioClient = twillo(process.env.TWILIO_SID, process.env.TWILIO_TOKEN)
 async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
 	const { phone, email } = req.body
 
-	const user = phone ? { phone: +phone } : { email }
+	const user = phone ? { phone } : { email }
 	const payload = Math.floor(10000 + Math.random() * 900000) + ''
 
 	const token = await client.token.create({
@@ -30,32 +30,34 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 		}
 	})
 
+	console.log(token)
+
 	if (phone) {
-		await twilioClient.messages.create({
-			messagingServiceSid: process.env.TWILIO_MSID,
-			to: process.env.MY_PHONE!,
-			body: `Your token is ${payload}`
-		})
+		// await twilioClient.messages.create({
+		// 	messagingServiceSid: process.env.TWILIO_MSID,
+		// 	to: process.env.MY_PHONE!,
+		// 	body: `Your token is ${payload}`
+		// })
 	}
 
 	if (email) {
-		const mailOptions = {
-			from: process.env.MAIL_ID,
-			to: email,
-			subject: 'Nomad Carrot Authentication Email',
-			text: `Authentication Code : ${payload}`
-		}
-		const result = await smtpTransport.sendMail(mailOptions, (error, responses) => {
-			if (error) {
-				console.log(error)
-				return null
-			} else {
-				console.log(responses)
-				return null
-			}
-		})
-		smtpTransport.close()
-		console.log(result)
+		// const mailOptions = {
+		// 	from: process.env.MAIL_ID,
+		// 	to: email,
+		// 	subject: 'Nomad Carrot Authentication Email',
+		// 	text: `Authentication Code : ${payload}`
+		// }
+		// const result = await smtpTransport.sendMail(mailOptions, (error, responses) => {
+		// 	if (error) {
+		// 		console.log(error)
+		// 		return null
+		// 	} else {
+		// 		console.log(responses)
+		// 		return null
+		// 	}
+		// })
+		// smtpTransport.close()
+		// console.log(result)
 	}
 
 	return res.json({
