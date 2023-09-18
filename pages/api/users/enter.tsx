@@ -1,8 +1,12 @@
+import twillo from 'twilio'
 import client from '@/libs/server/client'
 import withHandler from '@/libs/server/withHandler'
 import { NextApiRequest, NextApiResponse } from 'next'
+import { ResponseType } from '@/libs/server/withHandler'
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+const twilioClient = twillo(process.env.TWILIO_SID, process.env.TWILIO_TOKEN)
+
+async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
 	const { phone, email } = req.body
 
 	const user = phone ? { phone: +phone } : { email }
@@ -25,9 +29,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 		}
 	})
 
-	console.log(token)
+	if (phone) {
+		await twilioClient.messages.create({
+			messagingServiceSid: process.env.TWILIO_MSID,
+			to: process.env.MY_PHONE!,
+			body: `Your token is ${payload}`
+		})
+	}
 
-	return res.status(200).end()
+	return res.json({
+		ok: true
+	})
 }
 
 export default withHandler('POST', handler)
