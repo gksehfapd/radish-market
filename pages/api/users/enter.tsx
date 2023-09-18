@@ -4,6 +4,7 @@ import withHandler from '@/libs/server/withHandler'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { ResponseType } from '@/libs/server/withHandler'
 import smtpTransport from '@/libs/server/email'
+import { withApiSession } from '@/libs/server/withSession'
 
 const twilioClient = twillo(process.env.TWILIO_SID, process.env.TWILIO_TOKEN)
 
@@ -65,4 +66,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 	})
 }
 
-export default withHandler('POST', handler)
+export default withApiSession(withHandler({ method: 'POST', handler, isPrivate: false }))
