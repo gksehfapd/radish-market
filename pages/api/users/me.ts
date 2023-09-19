@@ -5,23 +5,13 @@ import { ResponseType } from '@/libs/server/withHandler'
 import { withApiSession } from '@/libs/server/withSession'
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
-	const {
-		body: { name, price, description },
-		session: { user }
-	} = req
-	const product = await client.product.create({
-		data: {
-			name,
-			price: +price,
-			description,
-			image: 'xx',
-			user: { connect: { id: user?.id } }
-		}
+	const profile = await client.user.findUnique({
+		where: { id: req.session.user?.id }
 	})
 	return res.json({
 		ok: true,
-		product
+		profile
 	})
 }
 
-export default withApiSession(withHandler({ method: 'POST', handler }))
+export default withApiSession(withHandler({ methods: ['GET'], handler }))

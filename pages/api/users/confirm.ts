@@ -30,4 +30,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 	return res.json({ ok: true })
 }
 
-export default withApiSession(withHandler({ method: 'POST', handler, isPrivate: false }))
+export default withApiSession(withHandler({ methods: ['POST'], handler, isPrivate: false }))
