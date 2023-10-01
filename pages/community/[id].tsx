@@ -7,6 +7,8 @@ import Link from 'next/link'
 import { Answer, Post, User } from '@prisma/client'
 import useMutation from '@/libs/client/useMutation'
 import { cls } from '@/libs/client/utils'
+import { useForm } from 'react-hook-form'
+import { useEffect } from 'react'
 
 interface AnswerWithUser extends Answer {
 	user: User
@@ -27,13 +29,28 @@ interface CommunityPostResponse {
 	isWondering: boolean
 }
 
+interface AnswerForm {
+	answer: string
+}
+
+interface AnswerResponse {
+	ok: boolean
+	response: Answer
+}
+
 const CommunityPostDetail: NextPage = () => {
 	const router = useRouter()
+	const { register, handleSubmit, reset } = useForm<AnswerForm>()
 	const { data, mutate } = useSWR<CommunityPostResponse>(
 		router.query.id ? `/api/posts/${router.query.id}` : null
 	)
 
-	const [wonder] = useMutation(`/api/posts/${router.query.id}/wonder`)
+	const [wonder, { loading }] = useMutation(`/api/posts/${router.query.id}/wonder`)
+
+	const [sendAnswer, { data: answerData, loading: answerLoading }] = useMutation<AnswerResponse>(
+		`/api/posts/${router.query.id}/answers`
+	)
+
 	const onWonderClick = () => {
 		mutate(
 			{
@@ -51,16 +68,28 @@ const CommunityPostDetail: NextPage = () => {
 			},
 			false
 		)
-
-		wonder({})
+		if (!loading) {
+			wonder({})
+		}
 	}
+
+	const onValid = (form: AnswerForm) => {
+		if (answerLoading) return
+		sendAnswer(form)
+	}
+
+	useEffect(() => {
+		if (answerData && answerData.ok) {
+			reset()
+		}
+	}, [answerData, reset])
 	return (
 		<Layout canGoBack>
 			<div>
 				<span className="inline-flex my-3 ml-4 items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
 					동네질문
 				</span>
-				<div className="flex mb-3 px-4 cursor-pointer pb-3  border-b items-center space-x-3">
+				<div className="flex mb-3 px-4 cursor-pointer pb-3 border-b items-center space-x-3">
 					<div className="w-10 h-10 rounded-full bg-slate-300" />
 					<div>
 						<p className="text-sm font-medium text-gray-700">{data?.post?.user.name}</p>
@@ -127,19 +156,24 @@ const CommunityPostDetail: NextPage = () => {
 									{answer.user.name}
 								</span>
 								<span className="text-xs text-gray-500 block ">
-									{answer.createdAt.toLocaleString()}
+									{/* {answer.createdAt.toLocaleString()} */} hihi
 								</span>
 								<p className="text-gray-700 mt-2">{answer.answer}</p>
 							</div>
 						</div>
 					))}
 				</div>
-				<div className="px-4">
-					<TextArea name="description" placeholder="Answer this question!" required />
+				<form className="px-4" onSubmit={handleSubmit(onValid)}>
+					<TextArea
+						name="description"
+						placeholder="Answer this question!"
+						required
+						register={register('answer', { required: true, minLength: 5 })}
+					/>
 					<button className="mt-2 w-full bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none ">
-						Reply
+						{answerLoading ? 'Loading...' : 'Reply'}
 					</button>
-				</div>
+				</form>
 			</div>
 		</Layout>
 	)
