@@ -6,7 +6,8 @@ import { withApiSession } from '@/libs/server/withSession'
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
 	const {
-		query: { id }
+		query: { id },
+		session: { user }
 	} = req
 
 	const post = await client.post.findUnique({
@@ -42,9 +43,21 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 			}
 		}
 	})
+	const isWondering = Boolean(
+		await client.wondering.findFirst({
+			where: {
+				postId: +id!.toString(),
+				userId: user?.id
+			},
+			select: {
+				id: true
+			}
+		})
+	)
 	return res.json({
 		ok: true,
-		post
+		post,
+		isWondering
 	})
 }
 
