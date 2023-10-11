@@ -3,7 +3,7 @@ import useSWR from 'swr'
 import Item from './item'
 
 interface ProductListProps {
-	kind: 'fav' | 'sales' | 'purchases'
+	kind: 'favs' | 'sales' | 'purchases'
 }
 
 interface Record {
