@@ -17,7 +17,7 @@ interface CreateForm {
 
 interface CreateResponse {
 	ok: boolean
-	stream: Stream
+	streams: Stream
 }
 
 const Create: NextPage = () => {
@@ -33,7 +33,7 @@ const Create: NextPage = () => {
 
 	useEffect(() => {
 		if (data && data.ok) {
-			router.push(`/stream/${data.stream.id}`)
+			router.push(`/stream/${data.streams.id}`)
 		}
 	}, [data])
 
@@ -48,7 +48,7 @@ const Create: NextPage = () => {
 					type="text"
 				/>
 				<Input
-					register={register('price', { required: true })}
+					register={register('price', { required: true, valueAsNumber: true })}
 					required
 					label="Price"
 					name="price"
