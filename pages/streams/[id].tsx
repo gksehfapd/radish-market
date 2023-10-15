@@ -7,7 +7,7 @@ import { Stream } from '@prisma/client'
 import { useForm } from 'react-hook-form'
 import useMutation from '@/libs/client/useMutation'
 import useUser from '@/libs/client/useUser'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface StreamMessage {
 	message: string
@@ -38,7 +38,8 @@ const Streams: NextPage = () => {
 	const { register, handleSubmit, reset } = useForm<MessageForm>()
 
 	const { data, mutate } = useSWR<StreamResponse>(
-		router.query.id ? `/api/streams/${router.query.id}` : null
+		router.query.id ? `/api/streams/${router.query.id}` : null,
+		{ refreshInterval: 1000 }
 	)
 
 	const [sendMessage, { loading, data: sendMessageData }] = useMutation(
@@ -48,6 +49,20 @@ const Streams: NextPage = () => {
 	const onValid = (form: MessageForm) => {
 		if (loading) return
 		reset()
+		mutate(
+			(prev: any) =>
+				prev && {
+					...prev,
+					stream: {
+						...prev.stream,
+						messages: [
+							...prev.stream.messages,
+							{ id: Date.now(), message: form.message, user: { ...user } }
+						]
+					}
+				},
+			false
+		)
 		sendMessage(form)
 	}
 
@@ -56,6 +71,11 @@ const Streams: NextPage = () => {
 			mutate()
 		}
 	}, [sendMessageData, mutate])
+
+	const scrollRef = useRef<HTMLDivElement>(null)
+	useEffect(() => {
+		scrollRef?.current?.scrollIntoView()
+	})
 
 	return (
 		<Layout canGoBack>
@@ -78,6 +98,7 @@ const Streams: NextPage = () => {
 								reversed={message.user.id === user?.id}
 							/>
 						))}
+						<div ref={scrollRef} />
 					</div>
 					<div className="fixed py-2 bg-white  bottom-0 inset-x-0">
 						<form
