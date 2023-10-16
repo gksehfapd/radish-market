@@ -4,6 +4,7 @@ import FloatingButton from '@/components/floating-button'
 import Layout from '@/components/layout'
 import { Stream } from '@prisma/client'
 import useSWR from 'swr'
+import { useEffect, useState } from 'react'
 
 interface StreamsResponse {
 	ok: boolean
@@ -12,6 +13,22 @@ interface StreamsResponse {
 
 const Streams: NextPage = () => {
 	const { data } = useSWR<StreamsResponse>(`/api/streams`)
+
+	const [hideFloatingBtn, setHideFloatingBtn] = useState(false)
+
+	useEffect(() => {
+		window.onscroll = function () {
+			const totalPageHeight = Math.floor(document.body.scrollHeight)
+
+			const scrollPoint = Math.floor(window.scrollY + window.innerHeight)
+
+			if (scrollPoint >= totalPageHeight - 10) {
+				setHideFloatingBtn(true)
+			} else {
+				setHideFloatingBtn(false)
+			}
+		}
+	}, [])
 
 	return (
 		<Layout hasTabBar title="라이브">
@@ -26,7 +43,22 @@ const Streams: NextPage = () => {
 						<h1 className="text-2xl mt-2 font-bold text-gray-900">{stream.name}</h1>
 					</Link>
 				))}
-				<FloatingButton href="/streams/create">
+
+				<div className="bg-red-200 py-3 px-12 flex justify-around">
+					<button>&larr;</button>
+					<button>1</button>
+					<button>1</button>
+					<button>1</button>
+					<button>1</button>
+					<button>1</button>
+					<button>1</button>
+					<button>1</button>
+					<button>1</button>
+					<button>1</button>
+					<button>1</button>
+					<button>&rarr;</button>
+				</div>
+				<FloatingButton href="/streams/create" hide={hideFloatingBtn}>
 					<svg
 						className="w-6 h-6"
 						fill="none"
