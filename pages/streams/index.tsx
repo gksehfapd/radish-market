@@ -5,14 +5,48 @@ import Layout from '@/components/layout'
 import { Stream } from '@prisma/client'
 import useSWR from 'swr'
 import { useEffect, useState } from 'react'
+import { cls } from '@/libs/client/utils'
 
 interface StreamsResponse {
 	ok: boolean
+	count: number
 	streams: Stream[]
 }
 
 const Streams: NextPage = () => {
-	const { data } = useSWR<StreamsResponse>(`/api/streams`)
+	const [pageNum, setPageNum] = useState(1)
+	//현재 페이지
+
+	const [pageListNum, setPageListNum] = useState(0)
+	const shownPages = 10
+
+	const { data } = useSWR<StreamsResponse>(`/api/streams?page=${pageNum}`)
+
+	const totalPages = Math.ceil(data?.count! / shownPages)
+	//총 페이지들
+
+	const pageArr = Array.from({ length: totalPages }, (v, i) => i + 1)
+	//총 페이지를 배열로 만듦
+
+	let currentPageList = pageArr.slice(pageListNum, pageListNum + shownPages)
+	//현재 보여지는 페이지들 배열
+
+	const maxPageList = Math.floor(totalPages / 10) * 10
+
+	const onPageBtnClick = (clickedNum: number) => {
+		setPageNum(clickedNum)
+		window.scrollTo(0, 0)
+	}
+
+	const prevPageList = () => {
+		if (pageListNum <= 0) return
+		setPageListNum((prev) => prev - shownPages)
+	}
+
+	const nextPageList = () => {
+		if (pageListNum >= maxPageList) return
+		setPageListNum((prev) => prev + shownPages)
+	}
 
 	const [hideFloatingBtn, setHideFloatingBtn] = useState(false)
 
@@ -44,19 +78,22 @@ const Streams: NextPage = () => {
 					</Link>
 				))}
 
-				<div className="bg-red-200 py-3 px-12 flex justify-around">
-					<button>&larr;</button>
-					<button>1</button>
-					<button>1</button>
-					<button>1</button>
-					<button>1</button>
-					<button>1</button>
-					<button>1</button>
-					<button>1</button>
-					<button>1</button>
-					<button>1</button>
-					<button>1</button>
-					<button>&rarr;</button>
+				<div className="py-3 px-12 flex justify-around">
+					<button onClick={prevPageList}>&larr;</button>
+					{currentPageList.map((i) => (
+						<button
+							className={cls(
+								'p-1 rounded-full w-8 h-8 hover:bg-orange-300 active:bg-orange-400',
+								i === pageNum ? 'bg-orange-200' : ''
+							)}
+							key={i}
+							onClick={() => onPageBtnClick(i)}
+						>
+							{i}
+						</button>
+					))}
+
+					<button onClick={nextPageList}>&rarr;</button>
 				</div>
 				<FloatingButton href="/streams/create" hide={hideFloatingBtn}>
 					<svg

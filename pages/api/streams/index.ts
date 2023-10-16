@@ -29,10 +29,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 	}
 
 	if (req.method === 'GET') {
+		const {
+			query: { page }
+		} = req
+
+		const count = await client.stream.count({})
 		const streams = await client.stream.findMany({
-			take: 10
+			take: 10,
+			skip: 10 * (Number(page) - 1)
 		})
-		res.json({ ok: true, streams })
+		res.json({ ok: true, streams, count })
 	}
 }
 
