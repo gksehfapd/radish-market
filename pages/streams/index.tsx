@@ -6,6 +6,7 @@ import { Stream } from '@prisma/client'
 import useSWR from 'swr'
 import { useEffect, useState } from 'react'
 import { cls } from '@/libs/client/utils'
+import Image from 'next/image'
 
 interface StreamsResponse {
 	ok: boolean
@@ -73,7 +74,14 @@ const Streams: NextPage = () => {
 						href={`/streams/${stream.id}`}
 						className="pt-4 block  px-4"
 					>
-						<div className="w-full rounded-md shadow-sm bg-slate-300 aspect-video" />
+						<div className="w-full relative overflow-hidden rounded-md shadow-sm bg-slate-300 aspect-video">
+							<Image
+								alt=""
+								layout="fill"
+								src={`https://videodelivery.net/${stream.cloudflareId}/thumbnails/thumbnail.jpg?height=320`}
+							/>
+						</div>
+
 						<h1 className="text-2xl mt-2 font-bold text-gray-900">{stream.name}</h1>
 					</Link>
 				))}
