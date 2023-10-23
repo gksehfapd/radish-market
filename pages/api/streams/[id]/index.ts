@@ -6,7 +6,8 @@ import { withApiSession } from '@/libs/server/withSession'
 
 async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) {
 	const {
-		query: { id }
+		query: { id },
+		session: { user }
 	} = req
 	if (req.method === 'GET') {
 		const stream = await client.stream.findUnique({
@@ -28,6 +29,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse<ResponseType>) 
 				}
 			}
 		})
+
+		const isOwner = stream?.userId == user?.id
+
+		if (stream && !isOwner) {
+			stream.cloudflareUrl = 'xxxxx'
+			stream.cloudflareKey = 'xxxxx'
+		}
 		res.json({
 			ok: true,
 			stream
