@@ -6,12 +6,7 @@ import { cls } from '@/libs/client/utils'
 import { useForm } from 'react-hook-form'
 import useMutation from '@/libs/client/useMutation'
 import { useRouter } from 'next/router'
-import dynamic from 'next/dynamic'
 
-const Bs = dynamic(
-	() => new Promise((resolve) => setTimeout(() => resolve(import('@/components/bs')), 10000)),
-	{ ssr: false, loading: () => <span>Loading a big component for you</span> }
-)
 interface EnterForm {
 	email?: string
 	phone?: string
@@ -118,7 +113,6 @@ const Enter: NextPage = () => {
 							) : null}
 							{method === 'phone' ? (
 								<>
-									<Bs />
 									<Input
 										register={register('phone')}
 										name="phone"
